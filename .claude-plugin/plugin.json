@@ -1,0 +1,9 @@
+{
+  "name": "context-bar",
+  "version": "0.1.0",
+  "description": "A live context-window usage bar above the Claude Code prompt",
+  "author": { "name": "imranbarbhuiya", "email": "imranbarbhuiya.fsd@gmail.com" },
+  "repository": "https://github.com/imranbarbhuiya/claude-context-bar",
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

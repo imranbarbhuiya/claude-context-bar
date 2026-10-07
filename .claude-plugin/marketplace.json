@@ -1,0 +1,5 @@
+{
+  "name": "claude-context-bar",
+  "owner": { "name": "imranbarbhuiya", "email": "imranbarbhuiya.fsd@gmail.com" },
+  "plugins": [{ "name": "context-bar", "source": "./" }]
+}
