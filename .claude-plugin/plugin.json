@@ -1,9 +1,25 @@
 {
   "name": "context-bar",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A live context-window usage bar above the Claude Code prompt",
-  "author": { "name": "imranbarbhuiya", "email": "imranbarbhuiya.fsd@gmail.com" },
+  "author": {
+    "name": "imranbarbhuiya",
+    "email": "imranbarbhuiya.fsd@gmail.com"
+  },
   "repository": "https://github.com/imranbarbhuiya/claude-context-bar",
   "license": "MIT",
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "show": {
+      "type": "string",
+      "title": "Show the bar",
+      "description": "on-demand: hidden until /context-bar; always: shown from the start; remember: as /context-bar last left it",
+      "options": [
+        "on-demand",
+        "always",
+        "remember"
+      ],
+      "default": "on-demand"
+    }
+  }
 }

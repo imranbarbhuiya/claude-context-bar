@@ -5,6 +5,7 @@ import type { ContextFill } from '../types'
 
 const PANE = 'context-details'
 const fill = atom({ plugin: 'context-bar', key: 'fill' } as const, null)
+const isVisible = atom({ plugin: 'context-bar', key: 'isVisible' } as const, false)
 
 const formatTokens = (n: number) =>
   n >= 1_000_000 ? `${+(n / 1_000_000).toFixed(1)}m` : n >= 1000 ? `${+(n / 1000).toFixed(1)}k` : `${n}`
@@ -30,10 +31,15 @@ async function store($: EngineInterface, { tokens, window, percent }: ContextFil
   await update($, fill, () => ({ tokens, window, percent }))
 }
 
-export const register: Register = on => {
+export const register: Register = (on, options) => {
+  const show = options.show
+
   on('session.start', async ($, e, next) => {
     const result = await next(e)
-    await $.command.register({ name: 'context-bar', description: 'Show the context usage breakdown in a pane' })
+    await $.command.register({ name: 'context-bar', description: 'Show or hide the context usage bar' })
+    await $.command.register({ name: 'context-details', description: 'Show or hide the context usage breakdown' })
+    const isShown = show === 'always' || (show === 'remember' && (await $.store.get('isVisible')) === true)
+    await update($, isVisible, () => isShown)
     await store($, (await $.session.usage()).context)
     return result
   })
@@ -52,13 +58,22 @@ export const register: Register = on => {
   })
 
   on('command.run', { command: 'context-bar' }, async $ => {
+    const isShown = !(await read($, isVisible))
+    await update($, isVisible, () => isShown)
+    if (show === 'remember') {
+      await $.store.set('isVisible', isShown)
+    }
+    return { text: `Context bar ${isShown ? 'shown' : 'hidden'}.` }
+  })
+
+  on('command.run', { command: 'context-details' }, async $ => {
     const isOpen = await toggleDetails($)
     return { text: `Context usage pane ${isOpen ? 'opened' : 'closed'}.` }
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     const current = await read($, fill)
-    if (e.props.hasSurvey || !current) {
+    if (e.props.hasSurvey || !current || !(await read($, isVisible))) {
       return next(e)
     }
 
